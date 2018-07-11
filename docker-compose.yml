@@ -1,0 +1,58 @@
+version: "3"
+services:
+  redis-master-1:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.2
+    command: sh -c "redis-server --protected-mode no --port 7000 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
+  redis-master-2:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.3
+    command: sh -c "redis-server --protected-mode no --port 7001 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
+    depends_on:
+      - redis-master-1
+  redis-master-3:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.4
+    command: sh -c "redis-server --protected-mode no --port 7002 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
+    depends_on:
+      - redis-master-2
+  redis-slave-1:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.5
+    command: sh -c "redis-server --protected-mode no --port 7003 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
+    depends_on:
+      - redis-master-3
+  redis-slave-2:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.6
+    command: sh -c "redis-server --protected-mode no --port 7004 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
+    depends_on:
+      - redis-master-3
+  redis-slave-3:
+    image: tryredis:latest
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.7
+    command: sh -c "redis-server --protected-mode no --port 7005 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --daemonize yes && yes yes | ./src/redis-trib.rb create --replicas 1 10.0.0.2:7000 10.0.0.3:7001 10.0.0.4:7002 10.0.0.5:7003 10.0.0.6:7004 10.0.0.7:7005 && while sleep 3600; do :; done"
+    depends_on:
+      - redis-master-1
+      - redis-master-2
+      - redis-master-3
+      - redis-slave-1
+      - redis-slave-2
+networks:
+  redisnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/16
