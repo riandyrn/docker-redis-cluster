@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t tryredis .
+docker build -t rediscluster .

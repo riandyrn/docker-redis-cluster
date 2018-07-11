@@ -12,7 +12,7 @@ RUN rm redis-4.0.10.tar.gz
 WORKDIR ./redis-4.0.10
 RUN make install
 # install redis driver for ruby to be used in redis-trib.rb
-RUN gem install redis
+RUN gem install redis -v 4.0.1
 # execute redis
 CMD redis-server --protected-mode no --port 7000
 # expose port

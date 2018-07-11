@@ -1,13 +1,13 @@
 version: "3"
 services:
   redis-master-1:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.2
     command: sh -c "redis-server --protected-mode no --port 7000 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000"
   redis-master-2:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.3
@@ -15,7 +15,7 @@ services:
     depends_on:
       - redis-master-1
   redis-master-3:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.4
@@ -23,7 +23,7 @@ services:
     depends_on:
       - redis-master-2
   redis-slave-1:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.5
@@ -31,7 +31,7 @@ services:
     depends_on:
       - redis-master-3
   redis-slave-2:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.6
@@ -39,7 +39,7 @@ services:
     depends_on:
       - redis-master-3
   redis-slave-3:
-    image: tryredis:latest
+    image: rediscluster:latest
     networks:
       redisnet:
         ipv4_address: 10.0.0.7
