@@ -5,7 +5,7 @@ Redis cluster run in docker compose for the purpose of dev environment.
 ## Start Cluster
 
 ```bash
-$> ./start.sh
+$> make up
 ```
 
 ---
@@ -13,7 +13,7 @@ $> ./start.sh
 ## Stop Cluster
 
 ```bash
-$> ./stop.sh
+$> make down
 ```
 
 ---
@@ -21,7 +21,7 @@ $> ./stop.sh
 ## Run CLI
 
 ```bash
-$> ./run-cli.sh
+$> make run-cli
 ```
 
 ---
