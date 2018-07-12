@@ -13,7 +13,10 @@ RUN chmod a+rx redis-trib.rb
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 # expose ports
 EXPOSE 7000 7001 7002 7003 7004 7005
-# run redis instance in cluster mode, use tail to keep container open
+# run multiple redis instances using supervisord 
+# use sleep to wait for supervisord (running as daemon) spawn all process
+# make all spawned process as redis cluster
+# use tail to keep container open
 CMD supervisord -c /etc/supervisor/supervisord.conf && \
     sleep 3 && \
     yes yes | ./redis-trib.rb create --replicas 1 0.0.0.0:7000 0.0.0.0:7001 0.0.0.0:7002 0.0.0.0:7003 0.0.0.0:7004 0.0.0.0:7005 && \
