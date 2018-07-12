@@ -1,61 +1,7 @@
 version: "3"
 services:
-  redis-master-1:
+  redis-cluster:
     image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.2
-  redis-master-2:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.3
-    depends_on:
-      - redis-master-1
-  redis-master-3:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.4
-    depends_on:
-      - redis-master-2
-  redis-slave-1:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.5
-    depends_on:
-      - redis-master-3
-  redis-slave-2:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.6
-    depends_on:
-      - redis-master-3
-  redis-slave-3:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.7
-    depends_on:
-      - redis-master-3
-  clusterizer:
-    image: rediscluster:latest
-    networks:
-      redisnet:
-        ipv4_address: 10.0.0.8
-    command: sh -c "yes yes | ./redis-trib.rb create --replicas 1 10.0.0.2:7000 10.0.0.3:7000 10.0.0.4:7000 10.0.0.5:7000 10.0.0.6:7000 10.0.0.7:7000"
-    depends_on:
-      - redis-master-1
-      - redis-master-2
-      - redis-master-3
-      - redis-slave-1
-      - redis-slave-2
-      - redis-slave-3
-networks:
-  redisnet:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.0.0.0/16
+    ports:
+      - "7000-7005:7000-7005"
+
