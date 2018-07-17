@@ -2,6 +2,8 @@ version: "3"
 services:
   redis-cluster:
     image: rediscluster:latest
+    environment:
+      - IP
     ports:
       - "7000-7005:7000-7005"
 
