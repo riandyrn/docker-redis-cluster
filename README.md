@@ -6,6 +6,7 @@ This docs contains following sections:
 - [`Start Cluster`](#start-cluster)
 - [`Stop Cluster`](#stop-cluster)
 - [`Run Redis CLI`](#run-redis-cli)
+- [`Make Cluster Discoverable From Other Container`](#make-cluster-discoverable-from-other-container)
 - [`Acknowledgements`](#acknowledgements)
 
 ---
@@ -66,7 +67,7 @@ $> make stop-swarm
 
 ## Run Redis CLI
 
-To run the internal `redis-cli` inside the container, we could use following helper command:
+If we want to run the internal `redis-cli` inside the container for some reason (for example `redis-cli` is not installed on host), we could use following helper command:
 
 ```bash
 $> make run-cli
@@ -74,11 +75,43 @@ $> make run-cli
 
 But this command only applies if we start our cluster using `docker-compose`.
 
-We could also use `redis-cli` from host to connect with the cluster. Simply use following command to do that:
+If `redis-cli` is installed on host, we could also use it to connect with cluster. Simply use following command to do that:
 
 ```bash
 $> redis-cli -c -p 7000
 ```
+
+[Back to Top](#docker-redis-cluster)
+
+---
+
+## Make Cluster Discoverable From Other Container
+
+Notice that in this stack, the assumption we use for accessing the cluster is via host.
+
+So for example if we have web server which need to connect to redis cluster, we need to execute this server on host, not on container inside the stack. If we do the latter, the server won't be able to connect to the cluster since the cluster is not discoverable to other container.
+
+But this kind of limitation is troublesome, right? Especially if we want to bundle our web server together with redis cluster on the same stack.
+
+Luckily we could make this redis cluster discoverable to other container. However when we do this, the cluster won't be discoverable to host. So we need to make sure which one is required in our dev environment.
+
+To make the redis cluster discoverable to other container, unset `IP` env variable on `docker-compose.yml`.
+
+So from this:
+
+```yaml
+environment:
+    - IP=0.0.0.0
+```
+
+To this:
+
+```yaml
+environment:
+    - IP
+```
+
+If we want to make it discoverable by host just reset the `IP` env variable to `0.0.0.0`.
 
 [Back to Top](#docker-redis-cluster)
 
